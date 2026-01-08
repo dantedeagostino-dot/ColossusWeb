@@ -548,8 +548,7 @@ const LoginView = ({ onLogin }) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       onLogin();
-    } catch (err) {
-      console.error(err);
+    } catch {
       setError('Acceso denegado. Verifique sus credenciales.');
     }
   };
