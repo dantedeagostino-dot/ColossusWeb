@@ -8,6 +8,8 @@ import {
   GraduationCap, Bus, Leaf, Briefcase,
   Terminal as TerminalIcon, Lock, Upload
 } from 'lucide-react';
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "./firebaseConfig";
 
 // --- 1. FONDO Y EFECTOS GLOBALES ---
 
@@ -536,15 +538,19 @@ const LibraryView = ({ reports }) => (
 
 // VISTA: LOGIN
 const LoginView = ({ onLogin }) => {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password === 'colossus2025') { // Simulación de contraseña
+    setError('');
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
       onLogin();
-    } else {
-      setError(true);
+    } catch (err) {
+      console.error(err);
+      setError('Acceso denegado. Verifique sus credenciales.');
     }
   };
 
@@ -557,7 +563,17 @@ const LoginView = ({ onLogin }) => {
         <h2 className="text-2xl font-black text-white text-center mb-6 uppercase tracking-wider">Acceso Desarrollador</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Contraseña de Acceso</label>
+            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
+              placeholder="usuario@colossus.tech"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Contraseña</label>
             <input
               type="password"
               value={password}
@@ -566,7 +582,7 @@ const LoginView = ({ onLogin }) => {
               placeholder="••••••••"
             />
           </div>
-          {error && <p className="text-red-500 text-xs text-center font-bold">Acceso denegado. Credenciales inválidas.</p>}
+          {error && <p className="text-red-500 text-xs text-center font-bold">{error}</p>}
           <button type="submit" className="w-full py-4 bg-blue-600 text-white rounded-lg font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-colors">
             Ingresar
           </button>
