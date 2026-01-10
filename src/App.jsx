@@ -561,6 +561,12 @@ const LoginView = ({ onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    if (!auth) {
+      setError('Error de configuración: Credenciales de Firebase no detectadas.');
+      return;
+    }
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
       onLogin();
