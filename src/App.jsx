@@ -233,9 +233,9 @@ const TeamCard = ({ name, role, bio, icon, image }) => {
       <p className="text-xs text-slate-400 font-light leading-relaxed mb-6 flex-grow">{bio}</p>
 
       <div className="flex gap-3 pt-4 border-t border-white/5 w-full justify-center md:justify-start">
-        <button className="p-1.5 rounded-full hover:bg-white/10 text-slate-600 hover:text-white transition-colors"><Linkedin size={14} /></button>
-        <button className="p-1.5 rounded-full hover:bg-white/10 text-slate-600 hover:text-white transition-colors"><Twitter size={14} /></button>
-        <button className="p-1.5 rounded-full hover:bg-white/10 text-slate-600 hover:text-white transition-colors"><Mail size={14} /></button>
+        <button aria-label={`Perfil de LinkedIn de ${name}`} className="p-1.5 rounded-full hover:bg-white/10 text-slate-600 hover:text-white transition-colors"><Linkedin size={14} /></button>
+        <button aria-label={`Perfil de Twitter de ${name}`} className="p-1.5 rounded-full hover:bg-white/10 text-slate-600 hover:text-white transition-colors"><Twitter size={14} /></button>
+        <button aria-label={`Enviar correo a ${name}`} className="p-1.5 rounded-full hover:bg-white/10 text-slate-600 hover:text-white transition-colors"><Mail size={14} /></button>
       </div>
     </div>
   );
@@ -735,7 +735,7 @@ export default function App() {
               <button className="hidden sm:block px-5 py-2 bg-white text-black rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all shadow-lg">
                 Sumate
               </button>
-              <button className="lg:hidden text-white" onClick={() => setMobileMenu(!mobileMenu)}>
+              <button aria-label={mobileMenu ? "Cerrar menú" : "Abrir menú"} className="lg:hidden text-white" onClick={() => setMobileMenu(!mobileMenu)}>
                 {mobileMenu ? <X size={24} /> : <Menu size={24} />}
               </button>
             </div>
