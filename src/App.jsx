@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Zap, Users, FileText, Activity, Library,
   Atom, Gavel, ClipboardList,
@@ -14,7 +14,7 @@ import { auth } from "./firebaseConfig";
 // --- 1. FONDO Y EFECTOS GLOBALES ---
 
 const DeepSpaceBackground = () => {
-  const [offset, setOffset] = useState(0);
+  const gridRef = useRef(null);
   const [particles] = useState(() => [...Array(15)].map((_, i) => ({
     id: i,
     width: Math.random() * 2 + 'px',
@@ -26,8 +26,23 @@ const DeepSpaceBackground = () => {
   })));
 
   useEffect(() => {
-    const handleScroll = () => setOffset(window.pageYOffset * 0.5);
-    window.addEventListener('scroll', handleScroll);
+    // Optimization: Use requestAnimationFrame and direct DOM manipulation
+    // to update background position on scroll without triggering React re-renders.
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (gridRef.current) {
+            const offset = window.scrollY * 0.5;
+            gridRef.current.style.transform = `perspective(1000px) rotateX(60deg) translateY(${offset}px) scale(1.5)`;
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -35,7 +50,8 @@ const DeepSpaceBackground = () => {
     <div className="fixed inset-0 z-0 bg-[#020617]">
       {/* Malla Cibernética de Fondo */}
       <div 
-        className="absolute inset-0 opacity-20 transition-transform duration-100"
+        ref={gridRef}
+        className="absolute inset-0 opacity-20"
         style={{
           backgroundImage: `
             linear-gradient(to right, #3b82f6 1px, transparent 1px),
@@ -43,7 +59,7 @@ const DeepSpaceBackground = () => {
           `,
           backgroundSize: '80px 80px',
           maskImage: 'radial-gradient(circle at 50% 50%, black, transparent 80%)',
-          transform: `perspective(1000px) rotateX(60deg) translateY(${offset}px) scale(1.5)`,
+          transform: `perspective(1000px) rotateX(60deg) translateY(0px) scale(1.5)`,
         }}
       />
       {/* Partículas Flotantes */}
